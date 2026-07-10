@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTEGRA · Арсенал · Момент отказа</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f5f4f0; font-family:'Montserrat',Arial,sans-serif; padding:100px 20px 32px; color:#1a1a1a; }
+.container { max-width:960px; margin:0 auto; }
+
+/* Навигационная панель */
+.nav-bar { position:fixed; top:0; left:0; right:0; background:#ffffff; box-shadow:0 2px 10px rgba(0,0,0,0.05); padding:12px 20px; z-index:1000; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.nav-btn { font-family:'Montserrat',Arial,sans-serif; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; padding:10px 18px; border-radius:8px; cursor:pointer; text-decoration:none; transition:all 0.2s ease; display:inline-flex; align-items:center; }
+.btn-main { background:#E6F1FB; color:#185FA5; border:1px solid #85B7EB; }
+.btn-main:hover { background:#185FA5; color:#ffffff; }
+.btn-delivery { background:#FAEEDA; color:#854F0B; border:1px solid #EF9F27; }
+.btn-delivery:hover { background:#EF9F27; color:#ffffff; }
+
+.top { text-align:center; margin-bottom:32px; }
+.logo { font-size:14px; font-weight:600; letter-spacing:4px; color:#185FA5; margin-bottom:6px; }
+.title { font-size:24px; font-weight:600; color:#1a1a1a; margin-bottom:6px; }
+.sub { font-size:13px; color:#888780; font-style:italic; }
+
+.context-box { background:#FCEBEB; border:0.5px solid #F09595; border-radius:12px; padding:16px 24px; margin-bottom:28px; display:flex; align-items:center; gap:16px; box-shadow:0 2px 4px rgba(163,45,45,0.02); }
+.context-icon { font-size:32px; }
+.context-text { font-size:14px; color:#A32D2D; font-weight:500; line-height:1.6; }
+
+.section { margin-bottom:28px; }
+.section-title { font-size:12px; font-weight:600; color:#185FA5; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; padding-bottom:8px; border-bottom:0.5px solid #D3D1C7; }
+
+/* Интерактивный словарный запас */
+.section-title.collapsible { cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; }
+.section-title.collapsible::after { content: '▼'; font-size: 10px; color: #888780; transition: transform 0.3s; }
+.section.active .section-title.collapsible::after { transform: rotate(180deg); }
+
+.script-card { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.script-card-header { padding:12px 18px; border-bottom:0.5px solid #D3D1C7; background:#fafaf8; }
+.script-card-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+.script-card-label.voice { color:#185FA5; }
+.script-card-label.chat { color:#534AB7; }
+
+.script-card-items { padding:14px 18px; display:flex; flex-direction:column; gap:12px; }
+.script-item { background:#F1EFE8; border-left:3px solid #85B7EB; border-radius:0 8px 8px 0; padding:12px 16px; font-size:14px; color:#444441; line-height:1.7; font-style:italic; transition:transform 0.2s ease; position: relative; }
+.script-item:hover { transform: translateX(2px); }
+.script-item.purple { background:#EEEDFE; border-left-color:#AFA9EC; padding-right: 50px; }
+
+/* Кнопка копирования */
+.btn-copy { position: absolute; top: 50%; transform: translateY(-50%); right: 14px; width: 28px; height: 28px; border-radius: 6px; background: #ffffff; border: 1px solid #D3D1C7; color: #534AB7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.btn-copy:hover { background: #534AB7; color: #ffffff; border-color: #534AB7; }
+.btn-copy.copied { background: #3B6D11; color: #ffffff; border-color: #3B6D11; }
+
+.words-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, margin 0.3s; }
+.section.active .words-grid { max-height: 2000px; margin-top: 10px; }
+@media (max-width: 900px) { .words-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .words-grid { grid-template-columns: 1fr; } }
+
+.words-card { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:16px 18px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.words-card-title { font-size:12px; font-weight:600; color:#185FA5; margin-bottom:12px; padding-bottom:6px; border-bottom:0.5px solid #D3D1C7; }
+.word-item { display:flex; align-items:flex-start; gap:8px; padding:6px 0; border-bottom:0.5px solid #f0efe8; font-size:13px; color:#444441; line-height:1.5; }
+.word-item:last-child { border-bottom:none; }
+.word-dot { width:5px; height:5px; border-radius:50%; background:#185FA5; flex-shrink:0; margin-top:6px; }
+
+.principles { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-bottom:28px; }
+@media (max-width: 768px) { .principles { grid-template-columns: 1fr; } }
+
+.principle { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:18px 20px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.principle-num { font-size:26px; font-weight:600; color:#E6F1FB; margin-bottom:8px; line-height:1; }
+.principle-title { font-size:14px; font-weight:600; color:#1a1a1a; margin-bottom:8px; line-height:1.4; }
+.principle-text { font-size:13px; color:#888780; line-height:1.6; }
+
+.bottom { text-align:center; margin-top:28px; padding-top:18px; border-top:0.5px solid #D3D1C7; }
+.bottom-text { font-size:13px; color:#185FA5; font-weight:500; letter-spacing:0.5px; }
+
+@media print { 
+  body { background:#f5f4f0 !important; padding-top:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; } 
+  .nav-bar { display:none; }
+  .words-grid { max-height: none !important; }
+  .btn-copy { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <a href="index.html" class="nav-btn btn-main">🏠 На главную </a>
+  <a href="page3.html" class="nav-btn btn-delivery">📦 Момент - Доставка </a>
+</div>
+
+<div class="container">
+
+  <div class="top">
+    <div class="logo">INTEGRA</div>
+    <div class="title">Арсенал менеджера · момент отказа</div>
+    <div class="sub">Голос · переписка · слова · фразы · принципы</div>
+  </div>
+
+  <div class="context-box">
+    <div class="context-icon">💡</div>
+    <div class="context-text">
+      Клиент сказал нет · не его продукт · не его время<br>
+      <strong>Отказ — это не конец разговора. Это переход к рекомендации.</strong><br>
+      Человек который отказал чувствует лёгкую вину. Рекомендация снимает её. Дай ему эту возможность.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Голос · варианты фраз</div>
+    <div class="script-card">
+      <div class="script-card-header"><div class="script-card-label voice">🎤 Что сказать голосом</div></div>
+      <div class="script-card-items">
+        <div class="script-item">"Понимаю вас. Скажите — есть среди знакомых спортсмены или врачи? Одно имя — и я сам со всем разберусь. Мне будет приятно что вы меня вспомнили."</div>
+        <div class="script-item">"Хорошо, не проблема. Подскажите — есть кто-то из коллег кому это могло бы помочь? Одно имя — больше ничего не нужно."</div>
+        <div class="script-item">"Понял вас. Если вспомните кого-то кому это актуально — просто назовите имя. Я сам позвоню и всё объясню."</div>
+        <div class="script-item">"Всё понял. Кстати — есть ли рядом с вами люди которые занимаются спортом или работают с пациентами? Одно имя — и я возьму на себя всё остальное."</div>
+        <div class="script-item">"Не беспокойтесь — просто перешлите им мой контакт. Я сам всё расскажу и ни к чему не обяжу."</div>
+        <div class="script-item">"Понял. Если знаете врачей которые работают со спортсменами — нам есть что им предложить. Одно имя — и я всё возьму на себя."</div>
+        <div class="script-item">"Хорошо. У нас работают с национальными сборными — если знаете врачей или тренеров такого уровня — буду очень рад познакомиться через вас."</div>
+        <div class="script-item">"Понимаю. Если рядом есть кто-то кто сейчас восстанавливается после травмы или много тренируется — мне было бы приятно помочь им. Просто дайте знать."</div>
+        <div class="script-item">"Хорошо, не настаиваю. Но если вспомните кого-то — мне будет искренне приятно. Одно имя — и я сам со всем разберусь."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Переписка · варианты сообщений</div>
+    <div class="script-card">
+      <div class="script-card-header"><div class="script-card-label chat">💬 Что написать в мессенджере</div></div>
+      <div class="script-card-items">
+        <div class="script-item purple"><span class="text-content">"Понял вас, не вопрос 🙏 Если вдруг вспомните кого-то из знакомых кому это актуально — скиньте им мой контакт. Одно имя — и я сам всё расскажу."</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Хорошо, понял. Если есть знакомые спортсмены или врачи — мне будет приятно если порекомендуете. Я сам позвоню и ни к чему не обяжу."</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Понял вас 👍 Если вспомните кого-то кому это может быть нужно — просто перешлите им моё сообщение. Дальше я сам."</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Понял, не настаиваю 🙏 Но если среди ваших знакомых есть кто-то кто сейчас занимается спортом или восстанавливается — мне было бы приятно помочь им. Одно имя — и я возьму всё на себя."</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Хорошо, всё понял. Кстати — если среди ваших знакомых есть врачи которые работают со спортсменами — у нас есть кое-что интересное специально для них. Буду рад если познакомите."</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Понял вас. Если когда-нибудь вспомните подходящего человека — мне будет очень приятно получить от вас весточку. Одно имя — и я сам всё сделаю 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section collapsible-section">
+    <div class="section-title collapsible">Словарный запас · пополнение арсенала</div>
+    <div class="words-grid">
+
+      <div class="words-card">
+        <div class="words-card-title">Вместо "рекомендуйте"</div>
+        <div class="word-item"><span class="word-dot"></span>Познакомьте меня с...</div>
+        <div class="word-item"><span class="word-dot"></span>Поделитесь моим контактом</div>
+        <div class="word-item"><span class="word-dot"></span>Назовите имя</div>
+        <div class="word-item"><span class="word-dot"></span>Дайте наводку</div>
+        <div class="word-item"><span class="word-dot"></span>Передайте мой номер</div>
+        <div class="word-item"><span class="word-dot"></span>Скиньте мой контакт</div>
+        <div class="word-item"><span class="word-dot"></span>Вспомните обо мне</div>
+        <div class="word-item"><span class="word-dot"></span>Дайте знать</div>
+        <div class="word-item"><span class="word-dot"></span>Перешлите моё сообщение</div>
+        <div class="word-item"><span class="word-dot"></span>Упомяните меня</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Фразы снимающие давление</div>
+        <div class="word-item"><span class="word-dot"></span>Я сам всё объясню</div>
+        <div class="word-item"><span class="word-dot"></span>Я сам позвоню</div>
+        <div class="word-item"><span class="word-dot"></span>Вам ничего не нужно делать</div>
+        <div class="word-item"><span class="word-dot"></span>Я возьму всё на себя</div>
+        <div class="word-item"><span class="word-dot"></span>Ни к чему не обяжу</div>
+        <div class="word-item"><span class="word-dot"></span>Одно имя — больше ничего</div>
+        <div class="word-item"><span class="word-dot"></span>Это займёт одну секунду</div>
+        <div class="word-item"><span class="word-dot"></span>Просто назовите имя</div>
+        <div class="word-item"><span class="word-dot"></span>Просто перешлите мой номер</div>
+        <div class="word-item"><span class="word-dot"></span>Одно движение с вашей стороны</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Эгоцентричность · "мне приятно"</div>
+        <div class="word-item"><span class="word-dot"></span>Мне будет приятно</div>
+        <div class="word-item"><span class="word-dot"></span>Мне будет искренне приятно</div>
+        <div class="word-item"><span class="word-dot"></span>Буду очень рад</div>
+        <div class="word-item"><span class="word-dot"></span>Буду очень благодарен</div>
+        <div class="word-item"><span class="word-dot"></span>Для меня это важно</div>
+        <div class="word-item"><span class="word-dot"></span>Мне приятно помогать людям</div>
+        <div class="word-item"><span class="word-dot"></span>Вы меня очень выручите</div>
+        <div class="word-item"><span class="word-dot"></span>Мне приятно что вы обо мне вспомнили</div>
+        <div class="word-item"><span class="word-dot"></span>Ваша рекомендация для меня дороже всего</div>
+        <div class="word-item"><span class="word-dot"></span>Буду очень рад весточке от вас</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Забота о знакомом клиента</div>
+        <div class="word-item"><span class="word-dot"></span>Позабочусь о них так же как о вас</div>
+        <div class="word-item"><span class="word-dot"></span>Им будет полезно</div>
+        <div class="word-item"><span class="word-dot"></span>Помогу им так же хорошо</div>
+        <div class="word-item"><span class="word-dot"></span>Они не пожалеют</div>
+        <div class="word-item"><span class="word-dot"></span>Хочу помочь и им</div>
+        <div class="word-item"><span class="word-dot"></span>Буду рад быть полезным вашему знакомому</div>
+        <div class="word-item"><span class="word-dot"></span>Расскажу им всё без давления</div>
+        <div class="word-item"><span class="word-dot"></span>Подберу для них лучшее решение</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Конкретная аудитория</div>
+        <div class="word-item"><span class="word-dot"></span>Спортсмены · врачи · тренеры</div>
+        <div class="word-item"><span class="word-dot"></span>Кто занимается спортом</div>
+        <div class="word-item"><span class="word-dot"></span>Кто работает с пациентами</div>
+        <div class="word-item"><span class="word-dot"></span>Кто восстанавливается после травмы</div>
+        <div class="word-item"><span class="word-dot"></span>Кто много тренируется</div>
+        <div class="word-item"><span class="word-dot"></span>Кто работает в медицине</div>
+        <div class="word-item"><span class="word-dot"></span>Кто следит за здоровьем</div>
+        <div class="word-item"><span class="word-dot"></span>Кто занимается биохакингом</div>
+        <div class="word-item"><span class="word-dot"></span>Кто хочет восстановиться быстрее</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Одно действие · простота</div>
+        <div class="word-item"><span class="word-dot"></span>Одно имя</div>
+        <div class="word-item"><span class="word-dot"></span>Одно имя — и я всё сделаю сам</div>
+        <div class="word-item"><span class="word-dot"></span>Один контакт</div>
+        <div class="word-item"><span class="word-dot"></span>Одно сообщение</div>
+        <div class="word-item"><span class="word-dot"></span>Просто назовите имя</div>
+        <div class="word-item"><span class="word-dot"></span>Просто перешлите мой номер</div>
+        <div class="word-item"><span class="word-dot"></span>Одно движение с вашей стороны</div>
+        <div class="word-item"><span class="word-dot"></span>Один клик — и я сам всё объясню</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">3 принципа в момент отказа</div>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">01</div>
+        <div class="principle-title">Не исчезай после отказа</div>
+        <div class="principle-text">Отказ — это не конец разговора. Это переход к другой теме. Менеджер который исчезает — теряет рекомендацию. Менеджер который остаётся тёплым — получает её.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">02</div>
+        <div class="principle-title">Сними вину — дай лёгкий выход</div>
+        <div class="principle-text">Человек который отказал чувствует лёгкую вину. Рекомендация снимает её. Дай ему эту возможность — помочь не деньгами а связями. Это легко и приятно.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">03</div>
+        <div class="principle-title">Одно действие — не больше</div>
+        <div class="principle-text">Чем проще действие — тем выше вероятность. Одно имя. Один контакт. Один клик пересылки. Не список. Не презентация. Одно действие.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-text">Поддержка — это тоже терапия · Integra</div>
+  </div>
+
+</div>
+
+<script>
+// Переключатель для блока "Словарный запас"
+document.querySelector('.collapsible').addEventListener('click', () => {
+  document.querySelector('.collapsible-section').classList.toggle('active');
+});
+
+// Кнопка копирования
+document.querySelectorAll('.btn-copy').forEach(button => {
+  button.addEventListener('click', () => {
+    const textToCopy = button.parentElement.querySelector('.text-content').innerText;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      button.innerText = '✓';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.innerText = '📋';
+        button.classList.remove('copied');
+      }, 1500);
+    });
+  });
+});
+</script>
+</body>
+</html>

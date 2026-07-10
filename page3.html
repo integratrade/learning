@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTEGRA · Арсенал · Момент доставки</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f5f4f0; font-family:'Montserrat',Arial,sans-serif; padding:100px 20px 32px; color:#1a1a1a; }
+.container { max-width:960px; margin:0 auto; }
+
+/* Навигационная панель */
+.nav-bar { position:fixed; top:0; left:0; right:0; background:#ffffff; box-shadow:0 2px 10px rgba(0,0,0,0.05); padding:12px 20px; z-index:1000; display:flex; justify-content:center; gap:12px; flex-wrap:wrap; }
+.nav-btn { font-family:'Montserrat',Arial,sans-serif; font-size:12px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; padding:10px 18px; border-radius:8px; cursor:pointer; text-decoration:none; transition:all 0.2s ease; display:inline-flex; align-items:center; }
+.btn-main { background:#E6F1FB; color:#185FA5; border:1px solid #85B7EB; }
+.btn-main:hover { background:#185FA5; color:#ffffff; }
+.btn-refusal { background:#FCEBEB; color:#A32D2D; border:1px solid #F09595; }
+.btn-refusal:hover { background:#F09595; color:#ffffff; }
+
+.top { text-align:center; margin-bottom:32px; }
+.logo { font-size:14px; font-weight:600; letter-spacing:4px; color:#185FA5; margin-bottom:6px; }
+.title { font-size:24px; font-weight:600; color:#1a1a1a; margin-bottom:6px; }
+.sub { font-size:13px; color:#888780; font-style:italic; }
+
+.context-box { background:#FAEEDA; border:0.5px solid #EF9F27; border-radius:12px; padding:16px 24px; margin-bottom:28px; display:flex; align-items:center; gap:16px; box-shadow:0 2px 4px rgba(133,79,11,0.02); }
+.context-icon { font-size:32px; }
+.context-text { font-size:14px; color:#854F0B; font-weight:500; line-height:1.6; }
+
+.section { margin-bottom:28px; }
+.section-title { font-size:12px; font-weight:600; color:#185FA5; text-transform:uppercase; letter-spacing:1.5px; margin-bottom:16px; padding-bottom:8px; border-bottom:0.5px solid #D3D1C7; }
+
+/* Интерактивный словарный запас */
+.section-title.collapsible { cursor: pointer; user-select: none; display: flex; justify-content: space-between; align-items: center; }
+.section-title.collapsible::after { content: '▼'; font-size: 10px; color: #888780; transition: transform 0.3s; }
+.section.active .section-title.collapsible::after { transform: rotate(180deg); }
+
+.script-card { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.02); margin-bottom:12px; }
+.script-card-header { padding:12px 18px; border-bottom:0.5px solid #D3D1C7; background:#fafaf8; }
+.script-card-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:1px; }
+.script-card-label.voice { color:#185FA5; }
+.script-card-label.chat { color:#534AB7; }
+
+.script-card-items { padding:14px 18px; display:flex; flex-direction:column; gap:12px; }
+.script-item { border-left:3px solid #85B7EB; border-radius:0 8px 8px 0; padding:12px 16px; font-size:14px; color:#444441; line-height:1.7; font-style:italic; background:#F1EFE8; transition:transform 0.2s ease; position: relative; }
+.script-item:hover { transform: translateX(2px); }
+.script-item.purple { background:#EEEDFE; border-left-color:#AFA9EC; padding-right: 50px; }
+
+/* Кнопка копирования */
+.btn-copy { position: absolute; top: 50%; transform: translateY(-50%); right: 14px; width: 28px; height: 28px; border-radius: 6px; background: #ffffff; border: 1px solid #D3D1C7; color: #534AB7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.btn-copy:hover { background: #534AB7; color: #ffffff; border-color: #534AB7; }
+.btn-copy.copied { background: #3B6D11; color: #ffffff; border-color: #3B6D11; }
+
+.words-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, margin 0.3s; }
+.section.active .words-grid { max-height: 2000px; margin-top: 10px; }
+@media (max-width: 900px) { .words-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .words-grid { grid-template-columns: 1fr; } }
+
+.words-card { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:16px 18px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.words-card-title { font-size:12px; font-weight:600; color:#185FA5; margin-bottom:12px; padding-bottom:6px; border-bottom:0.5px solid #D3D1C7; }
+.word-item { display:flex; align-items:flex-start; gap:8px; padding:6px 0; border-bottom:0.5px solid #f0efe8; font-size:13px; color:#444441; line-height:1.5; }
+.word-item:last-child { border-bottom:none; }
+.word-dot { width:5px; height:5px; border-radius:50%; background:#EF9F27; flex-shrink:0; margin-top:6px; }
+
+.principles { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+@media (max-width: 768px) { .principles { grid-template-columns: 1fr; } }
+
+.principle { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:18px 20px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.principle-num { font-size:26px; font-weight:600; color:#FAEEDA; margin-bottom:8px; line-height:1; }
+.principle-title { font-size:14px; font-weight:600; color:#1a1a1a; margin-bottom:8px; line-height:1.4; }
+.principle-text { font-size:13px; color:#888780; line-height:1.6; }
+
+.bottom { text-align:center; margin-top:28px; padding-top:18px; border-top:0.5px solid #D3D1C7; }
+.bottom-text { font-size:13px; color:#185FA5; font-weight:500; letter-spacing:0.5px; }
+
+@media print { 
+  body { background:#f5f4f0 !important; padding-top:0; -webkit-print-color-adjust:exact; print-color-adjust:exact; } 
+  .nav-bar { display:none; }
+  .words-grid { max-height: none !important; }
+  .btn-copy { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="nav-bar">
+  <a href="index.html" class="nav-btn btn-main">🏠 На главную </a>
+  <a href="page2.html" class="nav-btn btn-refusal">🛑 Момент - Отказ </a>
+</div>
+
+<div class="container">
+
+  <div class="top">
+    <div class="logo">INTEGRA</div>
+    <div class="title">Арсенал менеджера · момент доставки</div>
+    <div class="sub">Голос · переписка · слова · фразы · принципы</div>
+  </div>
+
+  <div class="context-box">
+    <div class="context-icon">📦</div>
+    <div class="context-text">
+      Клиент получил заказ · всё дошло · он доволен<br>
+      <strong>Это окно длиной 24–48 часов. Пик положительной эмоции. Не упусти его.</strong><br>
+      Руки держат коробку · мозг в режиме удовольствия · клиент максимально открыт к рекомендации.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Голос · варианты фраз</div>
+    <div class="script-card">
+      <div class="script-card-header"><div class="script-card-label voice">🎤 Что сказать голосом</div></div>
+      <div class="script-card-items">
+        <div class="script-item">"Рад что всё дошло! Как упаковка — всё целое? Если понравится — мне будет очень приятно если порекомендуете меня коллегам. Это лучшая оценка моей работы."</div>
+        <div class="script-item">"Отлично что получили! Скажите — всё в порядке с заказом? Если всё хорошо — мне будет приятно если расскажете кому-то из знакомых обо мне."</div>
+        <div class="script-item">"Рад что заказ дошёл вовремя! Если качество упаковки и сервис вам понравились — мне будет очень приятно если порекомендуете меня кому-то из коллег."</div>
+        <div class="script-item">"Рад что всё получили! Жду с нетерпением когда попробуете. А пока — если есть знакомые кому это может быть интересно — мне будет приятно если вспомните обо мне."</div>
+        <div class="script-item">"Отлично! Всё дошло в лучшем виде. Пока будете пробовать — если вспомните кого-то из знакомых кому это нужно — буду очень рад рекомендации."</div>
+        <div class="script-item">"Рад что всё дошло! Спасибо что доверились мне — для меня это важно. Если опыт работы со мной понравился — мне будет очень приятно если порекомендуете меня своим знакомым."</div>
+        <div class="script-item">"Отлично что получили! Итальянское качество — оно и в упаковке чувствуется. Если понравится — расскажите коллегам. Мне будет приятно что вы нас порекомендовали."</div>
+        <div class="script-item">"Рад что всё дошло вовремя! У нас строгий контроль доставки — 7 стран и везде один стандарт. Если сервис понравился — мне будет очень приятно если поделитесь с кем-то из знакомых."</div>
+        <div class="script-item">"Всё получили — отлично! Скажите — есть ли среди ваших коллег кто-то кому это тоже могло бы помочь? Одно имя — и я позабочусь о них так же как о вас."</div>
+        <div class="script-item">"Рад что всё дошло! Кстати — среди ваших знакомых есть спортсмены или врачи? Мне будет очень приятно если порекомендуете меня."</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">Переписка · варианты сообщений</div>
+    <div class="script-card">
+      <div class="script-card-header"><div class="script-card-label chat">💬 Что написать в мессенджере</div></div>
+      <div class="script-card-items">
+        <div class="script-item purple"><span class="text-content">"Рад что всё получили! 📦 Если сервис понравился — мне будет очень приятно если порекомендуете меня знакомым. Это лучшее что вы можете для меня сделать 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Отлично что всё дошло! ✅ Если качество упаковки понравилось — буду искренне рад если расскажете об этом кому-то из коллег 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Рад что заказ получили вовремя 📦 Жду ваших впечатлений когда попробуете! И если есть знакомые кому это нужно — скиньте им мой контакт. Мне будет приятно 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Получили — супер! 🎉 Для меня очень важно что всё дошло в лучшем виде. Если сервис понравился — мне будет искренне приятно если порекомендуете меня кому-то из своих. Одно имя — и я сам всё объясню 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Рад что всё в порядке! 📦 Работать с вами — удовольствие. Если есть кто-то из знакомых кому это актуально — буду очень рад если вспомните обо мне. Мне это важно 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Отлично что получили! ✅ Спасибо что доверились мне — это для меня очень ценно. Если опыт работы со мной понравился — порекомендуйте меня кому-то из знакомых. Буду искренне рад 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Всё получили? 📦 Как упаковка — всё целое и в порядке? Если да — есть ли среди ваших коллег кто-то кому это тоже могло бы помочь? Одно имя — и я возьму всё на себя 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">"Рад что всё получили! 📦 Итальянское качество — оно и в упаковке чувствуется 🇮🇹 Если понравится — расскажите коллегам. Мне будет очень приятно что вы нас порекомендовали 🙏"</span><button class="btn-copy" title="Копировать">📋</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section collapsible-section">
+    <div class="section-title collapsible">Словарный запас · пополнение арсенала</div>
+    <div class="words-grid">
+
+      <div class="words-card">
+        <div class="words-card-title">Слова для описания доставки</div>
+        <div class="word-item"><span class="word-dot"></span>Всё дошло · дошло вовремя</div>
+        <div class="word-item"><span class="word-dot"></span>Дошло в лучшем виде</div>
+        <div class="word-item"><span class="word-dot"></span>Получили · всё получили</div>
+        <div class="word-item"><span class="word-dot"></span>Всё целое · всё в порядке</div>
+        <div class="word-item"><span class="word-dot"></span>Всё как договаривались</div>
+        <div class="word-item"><span class="word-dot"></span>Вовремя · точно в срок</div>
+        <div class="word-item"><span class="word-dot"></span>Без задержек · в полном порядке</div>
+        <div class="word-item"><span class="word-dot"></span>Качество упаковки · внешний вид</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Через сервис и качество</div>
+        <div class="word-item"><span class="word-dot"></span>Итальянское качество с первой секунды</div>
+        <div class="word-item"><span class="word-dot"></span>Качество начинается с упаковки</div>
+        <div class="word-item"><span class="word-dot"></span>Строгий контроль доставки</div>
+        <div class="word-item"><span class="word-dot"></span>Один стандарт в 7 странах</div>
+        <div class="word-item"><span class="word-dot"></span>Как договаривались — так и сделали</div>
+        <div class="word-item"><span class="word-dot"></span>Слово держим всегда</div>
+        <div class="word-item"><span class="word-dot"></span>Температурный режим соблюдён</div>
+        <div class="word-item"><span class="word-dot"></span>Оригинал · сертифицировано</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Личная радость менеджера</div>
+        <div class="word-item"><span class="word-dot"></span>Рад что всё дошло</div>
+        <div class="word-item"><span class="word-dot"></span>Рад что всё в порядке</div>
+        <div class="word-item"><span class="word-dot"></span>Для меня важно что всё хорошо</div>
+        <div class="word-item"><span class="word-dot"></span>Для меня ценно что вы довольны</div>
+        <div class="word-item"><span class="word-dot"></span>Работать с вами — удовольствие</div>
+        <div class="word-item"><span class="word-dot"></span>Спасибо что доверились мне</div>
+        <div class="word-item"><span class="word-dot"></span>Это для меня очень важно</div>
+        <div class="word-item"><span class="word-dot"></span>Для меня это лучшая оценка работы</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Ожидание результата</div>
+        <div class="word-item"><span class="word-dot"></span>Жду ваших впечатлений</div>
+        <div class="word-item"><span class="word-dot"></span>Жду когда попробуете</div>
+        <div class="word-item"><span class="word-dot"></span>Уверен вам понравится</div>
+        <div class="word-item"><span class="word-dot"></span>Результат не заставит себя ждать</div>
+        <div class="word-item"><span class="word-dot"></span>Скоро почувствуете разницу</div>
+        <div class="word-item"><span class="word-dot"></span>Уверен останетесь довольны</div>
+        <div class="word-item"><span class="word-dot"></span>Дайте знать как первые ощущения</div>
+        <div class="word-item"><span class="word-dot"></span>Через 2-4 недели напомню о себе</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Эгоцентричность · "мне приятно"</div>
+        <div class="word-item"><span class="word-dot"></span>Мне будет очень приятно</div>
+        <div class="word-item"><span class="word-dot"></span>Мне будет искренне приятно</div>
+        <div class="word-item"><span class="word-dot"></span>Буду очень рад</div>
+        <div class="word-item"><span class="word-dot"></span>Это лучшее что вы можете для меня сделать</div>
+        <div class="word-item"><span class="word-dot"></span>Для меня это лучшая награда</div>
+        <div class="word-item"><span class="word-dot"></span>Ваша рекомендация дороже любой рекламы</div>
+        <div class="word-item"><span class="word-dot"></span>Мне важно знать что вы обо мне вспомнили</div>
+        <div class="word-item"><span class="word-dot"></span>Буду очень благодарен</div>
+      </div>
+
+      <div class="words-card">
+        <div class="words-card-title">Забота о знакомом</div>
+        <div class="word-item"><span class="word-dot"></span>Позабочусь о них так же как о вас</div>
+        <div class="word-item"><span class="word-dot"></span>Помогу им так же хорошо</div>
+        <div class="word-item"><span class="word-dot"></span>Они получат тот же уровень сервиса</div>
+        <div class="word-item"><span class="word-dot"></span>Расскажу им всё без давления</div>
+        <div class="word-item"><span class="word-dot"></span>Подберу для них лучшее решение</div>
+        <div class="word-item"><span class="word-dot"></span>Им будет так же удобно работать со мной</div>
+        <div class="word-item"><span class="word-dot"></span>Одно имя — и я возьму всё на себя</div>
+        <div class="word-item"><span class="word-dot"></span>Они не пожалеют</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-title">3 принципа в момент доставки</div>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num">01</div>
+        <div class="principle-title">Звони или пиши в течение 24 часов</div>
+        <div class="principle-text">Окно открыто 24–48 часов после доставки. Потом эмоция остывает. Потом начинается ожидание результата. Момент доставки — самый тёплый момент после оплаты. Не упусти его.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">02</div>
+        <div class="principle-title">Сначала убедись что всё хорошо</div>
+        <div class="principle-text">Сначала спроси про заказ — всё дошло, всё целое, всё как договаривались. Только после подтверждения что всё хорошо — проси рекомендацию. Если есть проблема — сначала реши её.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num">03</div>
+        <div class="principle-title">Создай мост к следующему контакту</div>
+        <div class="principle-text">В момент доставки клиент ещё не попробовал продукт. Скажи: "Жду ваших впечатлений" — это и забота и повод для следующего контакта через 2–4 недели когда будет результат.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-text">Поддержка — это тоже терапия · Integra</div>
+  </div>
+
+</div>
+
+<script>
+// Переключатель для блока "Словарный запас"
+document.querySelector('.collapsible').addEventListener('click', () => {
+  document.querySelector('.collapsible-section').classList.toggle('active');
+});
+
+// Кнопка копирования
+document.querySelectorAll('.btn-copy').forEach(button => {
+  button.addEventListener('click', () => {
+    const textToCopy = button.parentElement.querySelector('.text-content').innerText;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      button.innerText = '✓';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.innerText = '📋';
+        button.classList.remove('copied');
+      }, 1500);
+    });
+  });
+});
+</script>
+</body>
+</html>
