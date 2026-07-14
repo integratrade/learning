@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTEGRA · Момент оплаты</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+/* фон */
+body { background:#f4faf6; font-family:'Montserrat',Arial,sans-serif; padding:40px 20px 40px 280px; color:#1a1a1a; transition: padding 0.3s ease; }
+.container { max-width:900px; margin:0 auto; }
+
+/* БОКОВАЯ НАВИГАЦИЯ */
+.sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:#ffffff; box-shadow:2px 0 15px rgba(30,126,76,0.05); padding:24px 16px; z-index:1000; display:flex; flex-direction:column; gap:24px; }
+.sidebar-logo-block { display:flex; justify-content:center; align-items:center; padding-bottom:16px; border-bottom:1px solid #e8f8f0; }
+.sidebar-logo-text { font-size:18px; font-weight:600; letter-spacing:2.5px; color:#185FA5; }
+
+.nav-links { display:flex; flex-direction:column; gap:8px; }
+.nav-btn { font-family:'Montserrat',Arial,sans-serif; font-size:13px; font-weight:600; text-decoration:none; padding:12px 14px; border-radius:8px; display:flex; align-items:center; gap:10px; transition:all 0.2s ease; border:1px solid transparent; }
+
+/* Стили навигационных кнопок */
+.btn-recommend { background:#e6f1fb; color:#185FA5; }
+.btn-recommend:hover { background:#d0e1f2; color:#114578; border-color:#85b7eb; }
+
+.btn-refusal { background:#fff5f5; color:#a32d2d; }
+.btn-refusal:hover { background:#fcdede; color:#821c1c; border-color:#f09595; }
+
+/* АКТИВНАЯ КНОПКА ОПЛАТЫ */
+.btn-pay-page { background:#d1f2e1; color:#115230; border-color:#2ecc71; }
+.btn-pay-page:hover { background:#b8eacb; color:#0b3a21; border-color:#27ae60; }
+
+.btn-delivery { background:#fffaf0; color:#854f0b; }
+.btn-delivery:hover { background:#fef3c7; color:#5c3605; border-color:#ef9f27; }
+
+/* КОРПУС СТРАНИЦЫ */
+.top { text-align:center; margin-bottom:32px; }
+.title { font-size:24px; font-weight:600; color:#1a1a1a; margin-bottom:6px; }
+.sub { font-size:13px; color:#6b7280; font-style:italic; }
+
+.context-box { background:#ffffff; border:1px solid #2ecc71; border-radius:12px; padding:16px 24px; margin-bottom:28px; display:flex; align-items:center; gap:16px; box-shadow:0 4px 6px rgba(30,126,76,0.02); }
+.context-icon { font-size:32px; }
+.context-text { font-size:14px; color:#1e7e4c; font-weight:500; line-height:1.6; }
+
+/* Сворачивающиеся блоки (Голос / Переписка / Слова) */
+.section { background:#ffffff; border-radius:12px; border:1px solid #dcdfe6; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.02); margin-bottom:16px; }
+.section-header { padding:14px 50px 14px 20px; display:flex; align-items:center; gap:12px; cursor:pointer; user-select:none; transition: background 0.2s; position: relative; background:#fafbfe; border-bottom: 1px solid #eeedfe; }
+.section-header:hover { background:#f4f7fc; }
+
+.section-header::after { 
+  content: ''; 
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #888780;
+  border-bottom: 2px solid #888780;
+  transform: translateY(-50%) rotate(45deg);
+  transition: transform 0.3s ease; 
+  position: absolute; 
+  right: 24px; 
+  top: 50%;
+}
+.section.active .section-header::after { 
+  transform: translateY(-25%) rotate(-135deg); 
+}
+
+.section-icon { font-size:16px; min-width:24px; text-align:center; }
+.section-title { font-size:14px; font-weight:600; color:#1a1a1a; }
+.section-badge { font-size:11px; padding:4px 12px; border-radius:20px; margin-left:auto; white-space:nowrap; font-weight:500; display: inline-flex; align-items: center; }
+.badge-voice { background:#E6F1FB; color:#185FA5; border:0.5px solid #85B7EB; }
+.badge-chat { background:#EEEDFE; color:#3C3489; border:0.5px solid #AFA9EC; }
+.badge-words { background:#E8F8F0; color:#1e7e4c; border:0.5px solid #2ecc71; }
+
+.section-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; padding: 0 20px; }
+.section.active .section-body { max-height: 2500px; padding: 16px 20px 20px; border-top: 1px solid #e2eaf2; }
+
+/* Карточки скриптов */
+.script-card-items { display:flex; flex-direction:column; gap:12px; }
+.script-item { background:#f4f7fc; border-left:3px solid #185FA5; border-radius:0 8px 8px 0; padding:12px 50px 12px 16px; font-size:14px; color:#333333; line-height:1.7; font-style:italic; transition:transform 0.2s ease; position: relative; }
+.script-item:hover { transform: translateX(2px); }
+.script-item.purple { background:#EEEDFE; border-left-color:#534AB7; }
+
+/* Кнопка копирования */
+.btn-copy { position: absolute; top: 50%; transform: translateY(-50%); right: 14px; width: 28px; height: 28px; border-radius: 6px; background: #ffffff; border: 1px solid #D3D1C7; color: #534AB7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.btn-copy:hover { background: #534AB7; color: #ffffff; border-color: #534AB7; }
+.btn-copy.copied { background: #3B6D11; color: #ffffff; border-color: #3B6D11; }
+
+/* Словарная сетка */
+.words-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; }
+@media (max-width: 900px) { .words-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 600px) { .words-grid { grid-template-columns: 1fr; } }
+
+.words-card { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:16px 18px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.words-card-title { font-size:12px; font-weight:600; color:#1e7e4c; margin-bottom:12px; padding-bottom:6px; border-bottom:0.5px solid #D3D1C7; }
+.word-item { display:flex; align-items:flex-start; gap:8px; padding:6px 0; border-bottom:0.5px solid #f0efe8; font-size:13px; color:#444441; line-height:1.5; }
+.word-item:last-child { border-bottom:none; }
+.word-dot { width:5px; height:5px; border-radius:50%; background:#2ecc71; flex-shrink:0; margin-top:6px; }
+
+/* Принципы */
+.principles { display:grid; grid-template-columns:repeat(3, 1fr); gap:14px; margin-top:16px; }
+@media (max-width: 768px) { .principles { grid-template-columns: 1fr; } }
+
+.principle { background:#ffffff; border-radius:10px; border:0.5px solid #D3D1C7; padding:18px 20px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.principle-num { font-size:26px; font-weight:600; color:#e8f8f0; margin-bottom:8px; line-height:1; }
+.principle-title { font-size:14px; font-weight:600; color:#1a1a1a; margin-bottom:8px; line-height:1.4; }
+.principle-text { font-size:13px; color:#888780; line-height:1.6; }
+
+.bottom { text-align:center; margin-top:28px; padding-top:18px; border-top:1px solid #dcdfe6; }
+.bottom-text { font-size:13px; color:#185FA5; font-weight:500; letter-spacing:0.5px; }
+
+/* Адаптивность для мобильных */
+@media (max-width: 992px) {
+  body { padding: 160px 16px 32px; }
+  .sidebar { width: 100%; bottom: auto; height: auto; flex-direction: row; justify-content: space-between; align-items: center; padding: 12px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .sidebar-logo-block { border-bottom: none; padding-bottom: 0; }
+  .nav-links { flex-direction: row; gap: 8px; flex-wrap: wrap; }
+  .nav-btn { padding: 8px 12px; font-size: 11px; }
+}
+
+@media (max-width: 600px) {
+  .sidebar { flex-direction: column; gap: 12px; }
+  body { padding-top: 240px; }
+}
+
+@media print { 
+  body { background:#ffffff !important; padding:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; } 
+  .sidebar { display:none; }
+  .section-body { max-height: none !important; padding: 16px 20px 20px !important; border-top: 1px solid #dcdfe6 !important; }
+  .btn-copy { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="sidebar-logo-block">
+    <div class="sidebar-logo-text">INTEGRA</div>
+  </div>
+  
+  <div class="nav-links">
+    <a href="index.html" class="nav-btn btn-recommend">🤝 Рекомендации</a>
+    <a href="page2.html" class="nav-btn btn-refusal">🛑 Момент - Отказ</a>
+    <a href="#" class="nav-btn btn-pay-page">💳 Момент - Оплата</a>
+    <a href="page3.html" class="nav-btn btn-delivery">📦 Момент - Доставка</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="top">
+    <div class="title">Момент оплаты</div>
+    <div class="sub">Голос · переписка · слова · фразы · принципы</div>
+  </div>
+
+  <div class="context-box">
+    <div class="context-icon">✅</div>
+    <div class="context-text">
+      Клиент только что оплатил · пик уверенности и радости · мозг переключился с "трачу" на "получаю"<br>
+      <strong>Это самый горячий момент. Клиент горд своим решением. Используй эту энергию прямо сейчас.</strong><br>
+      Окно длиной 2–3 минуты, потом клиент закрывает приложение - действуй сразу.
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🎤</span>
+      <span class="section-title">Голос · варианты фраз</span>
+      <span class="section-badge badge-voice">10 вариантов</span>
+    </div>
+    <div class="section-body">
+      <div class="script-card-items">
+        <div class="script-item"><span class="text-content">Отлично! Вы приняли правильное решение. Ваш заказ уже в работе. Кстати, если среди знакомых есть кто-то, кому нужна такая же поддержка, скажите им обо мне. Мне будет очень приятно помочь и им.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Прекрасно! Поздравляю с правильным выбором. Пока Ваш заказ готовится к отправке, если вспомните кого-то из знакомых, кому это актуально, буду очень рада рекомендации.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Отличное решение! Вы выбрали итальянское качество - и это чувствуется сразу. Кстати, если среди коллег есть кто-то, кто тоже занимается спортом или работает с пациентами, мне будет приятно с ними познакомиться.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Замечательно! Спасибо за доверие, для меня это важно. Ваш заказ уже в работе. Если среди Ваших знакомых есть кто-то, кому это тоже могло бы помочь, мне будет очень приятно, если порекомендуете меня.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Оплата прошла, отлично! Ваш заказ уже в работе. Пока всё готовится, есть ли среди Ваших знакомых кто-то, кому стоит об этом рассказать? Одно имя - и я всё возьму на себя.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Всё прошло - Ваш заказ уже летит к вам! Кстати, пока едет, если вспомните кого-то из знакомых, кому это нужно, скиньте им мой контакт. Мне будет очень приятно.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Отлично! Добро пожаловать в семью Интегра. Если среди знакомых есть врачи, тренеры или спортсмены - мне будет искренне приятно, если порекомендуете меня. Позабочусь о них так же, как о Вас.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Оплата прошла, спасибо! Для меня это очень важно и приятно. Скажите, есть ли среди знакомых кто-то, кому я могла бы тоже помочь? Буду очень рада рекомендации от Вас.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Отлично! Я очень рада, что мы начали работать вместе. Если среди Ваших знакомых есть кто-то, кому нужна такая же поддержка, мне будет искренне приятно, если Вы обо мне вспомните.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item"><span class="text-content">Прекрасно! Пока заказ готовится к отправке, если есть рядом люди, которые следят за здоровьем и результатами, расскажите им обо мне. Позабочусь о них так же хорошо, как о Вас.</span><button class="btn-copy" title="Копировать">📋</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💬</span>
+      <span class="section-title">Переписка · варианты сообщений</span>
+      <span class="section-badge badge-chat">8 вариантов</span>
+    </div>
+    <div class="section-body">
+      <div class="script-card-items">
+        <div class="script-item purple"><span class="text-content">Оплата прошла, отлично! ✅ Пока Ваш заказ готовится к отправке, если среди знакомых есть кто-то, кому нужна такая же поддержка, буду рада, если порекомендуете меня. Мне будет приятно 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Всё прошло, замечательно! 🎉 Ваш заказ уже летит к Вам. Кстати, если вспомните знакомых, кому это актуально, скиньте им мой контакт. Мне будет очень приятно помочь и им 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Оплата получена ✅ Спасибо за доверие, для меня это важно! Если среди знакомых есть кто-то, кому это тоже нужно, - одно имя и я всё возьму на себя 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Поздравляю с правильным выбором 🎉 Вы выбрали итальянское качество! Если среди коллег есть кто-то, кто тоже следит за здоровьем, расскажите им обо мне. Мне будет очень приятно 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Ваш заказ уже в работе! 🚀 Пока всё готовится к отправке, если вспомните кого-то из знакомых, кому это нужно, скиньте им мой контакт. Мне будет приятно помочь и им 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Спасибо! Для меня очень важно и приятно, что Вы выбрали меня и Интегра 🙏 Если среди знакомых есть кто-то, кому я могла бы тоже помочь, буду очень рада рекомендации от Вас.</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Очень рада, что мы начали работать вместе! 🎉 Если вспомните кого-то из знакомых, кому нужна такая же поддержка, мне будет очень приятно, если Вы обо мне вспомните 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+        <div class="script-item purple"><span class="text-content">Теперь Вы в надежных руках Интегра! ✨ Буду очень рада, если порекомендуете нас своим друзьям или знакомым, для которых это актуально. Позабочусь о них так же, как о Вас 🙏</span><button class="btn-copy" title="Копировать">📋</button></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📚</span>
+      <span class="section-title">Словарный запас · пополнение арсенала</span>
+      <span class="section-badge badge-words">Конструктор</span>
+    </div>
+    <div class="section-body">
+      <div class="words-grid">
+        <div class="words-card">
+          <div class="words-card-title">Слова момента оплаты</div>
+          <div class="word-item"><span class="word-dot"></span>Оплата прошла / получена</div>
+          <div class="word-item"><span class="word-dot"></span>Всё прошло успешно</div>
+          <div class="word-item"><span class="word-dot"></span>Заказ принят / в работе</div>
+          <div class="word-item"><span class="word-dot"></span>Уже летит к Вам</div>
+          <div class="word-item"><span class="word-dot"></span>Транзакция прошла</div>
+          <div class="word-item"><span class="word-dot"></span>Всё оформлено / зафиксировано</div>
+          <div class="word-item"><span class="word-dot"></span>Платёж получен ·/ всё в порядке</div>
+        </div>
+
+        <div class="words-card">
+          <div class="words-card-title">Поздравление и статус</div>
+          <div class="word-item"><span class="word-dot"></span>Поздравляю с правильным выбором</div>
+          <div class="word-item"><span class="word-dot"></span>Прекрасное решение</div>
+          <div class="word-item"><span class="word-dot"></span>Отличный выбор</div>
+          <div class="word-item"><span class="word-dot"></span>Вы теперь клиент Интегра</div>
+          <div class="word-item"><span class="word-dot"></span>Вы выбрали итальянское качество</div>
+          <div class="word-item"><span class="word-dot"></span>Правильное решение / мудрый выбор</div>
+          <div class="word-item"><span class="word-dot"></span>Вы не пожалеете</div>
+        </div>
+
+        <div class="words-card">
+          <div class="words-card-title">Движение и скорость</div>
+          <div class="word-item"><span class="word-dot"></span>Ваш заказ уже в работе</div>
+          <div class="word-item"><span class="word-dot"></span>Уже летит к вам</div>
+          <div class="word-item"><span class="word-dot"></span>Уже на пути к вам</div>
+          <div class="word-item"><span class="word-dot"></span>Скоро будет у вас</div>
+          <div class="word-item"><span class="word-dot"></span>В течение ... дней получите</div>
+          <div class="word-item"><span class="word-dot"></span>Всё уже запущено</div>
+        </div>
+
+        <div class="words-card">
+          <div class="words-card-title">Доверие и благодарность</div>
+          <div class="word-item"><span class="word-dot"></span>Спасибо за доверие</div>
+          <div class="word-item"><span class="word-dot"></span>Для меня это важно</div>
+          <div class="word-item"><span class="word-dot"></span>Для меня это ценно</div>
+          <div class="word-item"><span class="word-dot"></span>Рада, что выбрали меня</div>
+          <div class="word-item"><span class="word-dot"></span>Рада, что выбрали Интегра</div>
+          <div class="word-item"><span class="word-dot"></span>Приятно работать с Вами</div>
+          <div class="word-item"><span class="word-dot"></span>Рада нашему сотрудничеству</div>
+          <div class="word-item"><span class="word-dot"></span>Это для меня многое значит</div>
+        </div>
+
+        <div class="words-card">
+          <div class="words-card-title">Эгоцентричность · "мне приятно"</div>
+          <div class="word-item"><span class="word-dot"></span>Мне будет очень приятно</div>
+          <div class="word-item"><span class="word-dot"></span>Мне будет искренне приятно</div>
+          <div class="word-item"><span class="word-dot"></span>Буду очень рада</div>
+          <div class="word-item"><span class="word-dot"></span>Буду очень благодарна</div>
+          <div class="word-item"><span class="word-dot"></span>Для меня - это лучшая оценка</div>
+          <div class="word-item"><span class="word-dot"></span>Мне приятно, что Вы обо мне вспомните</div>
+          <div class="word-item"><span class="word-dot"></span>Ваша рекомендация дороже рекламы</div>
+          <div class="word-item"><span class="word-dot"></span>Это лучшее, что Вы можете для меня сделать</div>
+        </div>
+
+        <div class="words-card">
+          <div class="words-card-title">Забота о знакомом</div>
+          <div class="word-item"><span class="word-dot"></span>Позабочусь о них так же, как о Вас</div>
+          <div class="word-item"><span class="word-dot"></span>Помогу им так же хорошо</div>
+          <div class="word-item"><span class="word-dot"></span>Тот же уровень сервиса</div>
+          <div class="word-item"><span class="word-dot"></span>Расскажу всё без давления</div>
+          <div class="word-item"><span class="word-dot"></span>Подберу для них лучшее решение</div>
+          <div class="word-item"><span class="word-dot"></span>Одно имя - и я возьму всё на себя</div>
+          <div class="word-item"><span class="word-dot"></span>Я сама позвоню и всё объясню</div>
+          <div class="word-item"><span class="word-dot"></span>Они не пожалеют</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <div class="principles-container" style="margin-top: 32px;">
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-num" style="color: #a3e2c9;">01</div>
+        <div class="principle-title">Сначала подтверди и порадуй</div>
+        <div class="principle-text">Первые слова после оплаты — это не просьба. Это подтверждение правильности решения. "Отличный выбор" · "Поздравляю" · "Добро пожаловать в Integra". Только после этого — просьба о рекомендации.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num" style="color: #a3e2c9;">02</div>
+        <div class="principle-title">Говори быстро — момент горячий</div>
+        <div class="principle-text">Момент оплаты длится 2–3 минуты. Потом клиент закрывает приложение и переключается. Просьба о рекомендации должна прозвучать сразу — в том же разговоре или в том же сообщении.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-num" style="color: #a3e2c9;">03</div>
+        <div class="principle-title">Свяжи рекомендацию с движением заказа</div>
+        <div class="principle-text">"Пока ваш заказ готовится — если вспомните кого-то..." Это создаёт ощущение что рекомендация и заказ движутся параллельно. Клиент думает о заказе — и одновременно о рекомендации.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-text">Поддержка — это тоже терапия · Integra</div>
+  </div>
+
+</div>
+
+<script>
+// Интерактивное открытие и закрытие секций (Голос, Переписка, Словарный запас)
+document.querySelectorAll('.section-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const parent = header.parentElement;
+    parent.classList.toggle('active');
+  });
+});
+
+// Кнопка копирования фраз
+document.querySelectorAll('.btn-copy').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation(); // Предотвращаем схлопывание списка при копировании внутри него
+    const textToCopy = button.parentElement.querySelector('.text-content').innerText;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      button.innerText = '✓';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.innerText = '📋';
+        button.classList.remove('copied');
+      }, 1500);
+    });
+  });
+});
+</script>
+</body>
+</html>

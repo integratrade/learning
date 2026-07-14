@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>INTEGRA · Скрипты · Просьба о рекомендации</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+/* фон светло-голубой */
+body { background:#eef5fc; font-family:'Montserrat',Arial,sans-serif; padding:40px 20px 40px 280px; color:#1a1a1a; transition: padding 0.3s ease; }
+.container { max-width:900px; margin:0 auto; }
+
+/* БОКОВАЯ НАВИГАЦИЯ */
+.sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:#ffffff; box-shadow:2px 0 15px rgba(24,95,165,0.06); padding:24px 16px; z-index:1000; display:flex; flex-direction:column; gap:24px; }
+.sidebar-logo-block { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding-bottom: 16px; 
+  border-bottom: 1px solid #e2eaf2; 
+}
+.sidebar-logo-text { font-size:18px; font-weight:600; letter-spacing:2.5px; color:#185FA5; }
+
+.nav-links { display:flex; flex-direction:column; gap:8px; }
+.nav-btn { font-family:'Montserrat',Arial,sans-serif; font-size:13px; font-weight:600; text-decoration:none; padding:12px 14px; border-radius:8px; display:flex; align-items:center; gap:10px; transition:all 0.2s ease; color:#4a5568; border:1px solid transparent; }
+.nav-btn:hover { background:#f0f7ff; color:#185FA5; }
+
+/* Стили для разных страниц */
+.btn-recommend { background:#e6f1fb; color:#185FA5; border-color:#85b7eb; } /* Активная текущая */
+
+/* Отказ - красный */
+.btn-refusal { background:#fff5f5; color:#a32d2d; }
+.btn-refusal:hover { background:#ffe3e3; border-color:#f09595; }
+
+/* Доставка - оранжевый */
+.btn-delivery { background:#fffaf0; color:#854f0b; }
+.btn-delivery:hover { background:#fef3c7; border-color:#ef9f27; }
+
+/* Оплата - изумрудно-зеленый */
+.btn-pay-page { background:#e8f8f0; color:#1e7e4c; }
+.btn-pay-page:hover { background:#d1f2e1; border-color:#2ecc71; color:#19663e; }
+
+.top { text-align:center; margin-bottom:32px; }
+.title { font-size:24px; font-weight:600; color:#1a1a1a; margin-bottom:6px; }
+.sub { font-size:13px; color:#6b7280; font-style:italic; }
+
+.formula { background:#ffffff; border:1px solid #d0e1f2; border-radius:12px; padding:16px 24px; margin-bottom:28px; text-align:center; box-shadow:0 4px 6px rgba(24,95,165,0.02); }
+.formula-text { font-size:14px; color:#185FA5; font-weight:500; line-height:1.7; }
+
+.moments { display:flex; flex-direction:column; gap:16px; }
+.moment { background:#ffffff; border-radius:12px; border:1px solid #dcdfe6; overflow:hidden; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+
+.moment-header { padding:14px 50px 14px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid #eeedfe; background:#fafbfe; cursor:pointer; user-select:none; transition: background 0.2s; position: relative; }
+.moment-header:hover { background:#f4f7fc; }
+
+/* Стрелка раскрытия списка */
+.moment-header::after { 
+  content: ''; 
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid #888780;
+  border-bottom: 2px solid #888780;
+  transform: translateY(-50%) rotate(45deg);
+  transition: transform 0.3s ease; 
+  position: absolute; 
+  right: 24px; 
+  top: 50%;
+}
+.moment.active .moment-header::after { 
+  transform: translateY(-25%) rotate(-135deg); 
+}
+
+.moment-num { font-size:14px; font-weight:600; color:#185FA5; min-width:24px; }
+.moment-title { font-size:14px; font-weight:600; color:#1a1a1a; padding-right: 15px; }
+.moment-tag { font-size:11px; padding:4px 12px; border-radius:20px; margin-left:auto; white-space:nowrap; font-weight:500; display: inline-flex; align-items: center; }
+
+/* цвета тегов */
+.tag-new { background:#e2f7eb; color:#115230; border:0.5px solid #2ecc71; } /* Мятный */
+.tag-doubt { background:#fef3c7; color:#78350f; border:0.5px solid #ef9f27; } /* Горчичный */
+.tag-no { background:#fff5f5; color:#a32d2d; border:0.5px solid #f09595; } /* Красный */
+.tag-pay { background:#e8f8f0; color:#1e7e4c; border:0.5px solid #2ecc71; } /* Изумрудный */
+.tag-delivery { background:#fffaf0; color:#854f0b; border:0.5px solid #ef9f27; } /* Оранжевый */
+.tag-result { background:#f0fdf4; color:#166534; border:0.5px solid #4ade80; } /* Зеленый */
+.tag-loyal { background:#f5f3ff; color:#5b21b6; border:0.5px solid #a78bfa; } /* Сиреневый */
+
+.moment-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease-out; padding: 0 20px; }
+.moment.active .moment-body { max-height: 1000px; padding: 16px 20px 20px; border-top: 1px solid #e2eaf2; }
+.moment-context { font-size:13px; color:#6b7280; margin-bottom:14px; font-style:italic; }
+
+.scripts-row { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:12px; }
+@media (max-width: 768px) { .scripts-row { grid-template-columns: 1fr; } }
+
+/* Скрипты Голоса */
+.script-box { background:#f4f7fc; border-left:3px solid #185FA5; border-radius:0 8px 8px 0; padding:12px 45px 12px 16px; transition:transform 0.2s ease; position: relative; }
+.script-box:hover { transform: translateX(2px); }
+.script-label { font-size:11px; color:#185FA5; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:600; }
+.script-text { font-size:14px; color:#333333; line-height:1.7; font-style:italic; }
+
+/* Скрипты Переписки */
+.script-box2 { background:#EEEDFE; border-left:3px solid #534AB7; border-radius:0 8px 8px 0; padding:12px 45px 12px 16px; transition:transform 0.2s ease; position: relative; }
+.script-box2:hover { transform: translateX(2px); }
+.script-label2 { font-size:11px; color:#534AB7; text-transform:uppercase; letter-spacing:1px; margin-bottom:6px; font-weight:600; }
+.script-text2 { font-size:14px; color:#333333; line-height:1.7; font-style:italic; }
+
+/* Универсальная кнопка копирования */
+.btn-copy { position: absolute; top: 12px; right: 12px; width: 28px; height: 28px; border-radius: 6px; background: #ffffff; border: 1px solid #D3D1C7; color: #534AB7; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s ease; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+.btn-copy:hover { background: #534AB7; color: #ffffff; border-color: #534AB7; }
+.btn-copy.copied { background: #3B6D11; color: #ffffff; border-color: #3B6D11; }
+
+.why { font-size:13px; color:#6b7280; line-height:1.6; border-top: 1px dashed #e2eaf2; padding-top: 10px; margin-top: 10px; }
+.why b { color:#185FA5; font-weight:600; }
+
+.rules { background:#ffffff; border:1px solid #dcdfe6; border-radius:12px; padding:20px 24px; margin-top:24px; box-shadow:0 2px 4px rgba(0,0,0,0.02); }
+.rules-title { font-size:12px; color:#185FA5; text-transform:uppercase; letter-spacing:1px; margin-bottom:16px; font-weight:600; border-bottom: 1px solid #e2eaf2; padding-bottom: 8px; }
+.rule { display:flex; align-items:flex-start; gap:16px; padding:12px 0; border-bottom:1px solid #e2eaf2; }
+.rule:last-child { border-bottom:none; }
+.rule-num { font-size:18px; color:#185FA5; font-weight:600; min-width:24px; }
+.rule-main { font-size:14px; color:#1a1a1a; font-weight:600; line-height:1.5; }
+.rule-sub { font-size:13px; color:#6b7280; margin-top:4px; line-height:1.6; }
+
+.bottom { text-align:center; margin-top:24px; padding-top:18px; border-top:1px solid #dcdfe6; }
+.bottom-text { font-size:13px; color:#185FA5; font-weight:500; letter-spacing:0.5px; }
+
+/* Адаптивность для мобильных */
+@media (max-width: 992px) {
+  body { padding: 160px 16px 32px; }
+  .sidebar { width: 100%; bottom: auto; height: auto; flex-direction: row; justify-content: space-between; align-items: center; padding: 12px 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .sidebar-logo-block { border-bottom: none; padding-bottom: 0; }
+  .nav-links { flex-direction: row; gap: 8px; flex-wrap: wrap; }
+  .nav-btn { padding: 8px 12px; font-size: 11px; }
+}
+
+@media (max-width: 600px) {
+  .sidebar { flex-direction: column; gap: 12px; }
+  body { padding-top: 240px; }
+}
+
+@media print {
+  body { background:#ffffff !important; padding:0 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .sidebar { display:none; }
+  .moment-body { max-height: none !important; padding: 16px 20px 20px !important; border-top: 1px solid #dcdfe6 !important; }
+  .btn-copy { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+<!-- БОКОВАЯ ПАНЕЛЬ -->
+<div class="sidebar">
+  <div class="sidebar-logo-block">
+    <div class="sidebar-logo-text">INTEGRA</div>
+  </div>
+  
+  <div class="nav-links">
+    <a href="#" class="nav-btn btn-recommend">🤝 Рекомендации</a>
+    <a href="page2.html" class="nav-btn btn-refusal">🛑 Момент - Отказ</a>
+    <a href="page4.html" class="nav-btn btn-pay-page">💳 Момент - Оплата</a>
+    <a href="page3.html" class="nav-btn btn-delivery">📦 Момент - Доставка</a>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="top">
+    <div class="title">Скрипты · просьба о рекомендации</div>
+    <div class="sub">7 моментов · голос и переписка · когда и как просить</div>
+  </div>
+
+  <div class="formula">
+    <div class="formula-text">
+      ПРИБЫЛЬ = (Цена · Инновация + Качество) × (Количество · Повторные покупки + <strong>Рекомендации</strong>) - Затраты<br>
+      <strong style="color:#1a1a1a">Довольный клиент - лучший продавец Интегра</strong>
+    </div>
+  </div>
+
+  <div class="moments">
+
+    <!-- МОМЕНТ 1 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">1</span>
+        <span class="moment-title">Первый звонок · клиент заинтересовался</span>
+        <span class="moment-tag tag-new">Новый</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Клиент задаёт вопросы · чувствует, что продукт подходит</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Если у Вас есть коллеги, которым это интересно, мне будет очень приятно с ними поговорить. Порекомендуйте меня, Вы меня очень выручите.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Кстати, если вспомните знакомых кому это нужно, поделитесь моим контактом. Мне будет искренне приятно помочь и им.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> рекомендация до покупки - признак доверия к менеджеру как к человеку.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 2 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">2</span>
+        <span class="moment-title">"Подумаю" · момент сомнения</span>
+        <span class="moment-tag tag-doubt">Сомнение</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Клиент не отказал, но завис · думает</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Хорошо, подумайте. Пока думаете, если вспомните кого-то, кому это нужно прямо сейчас, поделитесь моим номером. Мне будет приятно помочь Вашему знакомому.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Пока думаете, если есть кто-то, кому это актуально прямо сейчас, скиньте им мой контакт. Мне будет приятно - и им помогу.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> клиент может помочь не покупая - снимает давление и активирует желание быть полезным.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 3 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">3</span>
+        <span class="moment-title">Момент отказа · сам не купит</span>
+        <span class="moment-tag tag-no">Отказ</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Клиент сказал нет · не то время или не его продукт</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Понимаю Вас. Есть среди знакомых спортсмены, врачи или тренеры? Одно имя - и я всё сделаю сама. Мне будет приятно, что Вы меня вспомнили."</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Поняла Вас. Если вспомните кого-то из знакомых, кому это актуально, скиньте мой контакт. Одно имя - и я сама разберусь. Буду очень рада.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> человек, который отказал, хочет помочь иначе. Рекомендация снимает вину - легко и приятно.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 4 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">4</span>
+        <span class="moment-title">Клиент оплатил · пик решения</span>
+        <span class="moment-tag tag-pay">Оплата</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Только что нажал "оплатить" · пик уверенности и радости</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Отлично! Ваш заказ уже в работе. Если среди знакомых есть кто-то, кому нужна такая же поддержка, скажите им обо мне. Мне будет очень приятно помочь и им.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Ваш заказ уже в работе. Если среди знакомых есть кто-то, кому это нужно, буду рада, если порекомендуете меня. Мне будет приятно знать, что Вы обо мне вспомнили.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> момент пика положительного решения - рекомендовать легко и естественно.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 5 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">5</span>
+        <span class="moment-title">Клиент получил заказ · доставка</span>
+        <span class="moment-tag tag-delivery">Доставка</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Получил посылку · всё пришло · доволен</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Рада, что всё дошло! Если понравится, мне будет очень приятно, если порекомендуете меня коллегам. Для меня это лучшая оценка работы.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Рада, что всё получили! Если понравится, мне будет искренне приятно, если порекомендуете меня знакомым. Это лучшее, что Вы можете для меня сделать.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> момент физического удовольствия от получения - эмоция максимальная.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 6 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">6</span>
+        <span class="moment-title">Клиент почувствовал результат</span>
+        <span class="moment-tag tag-result">Результат</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Прошло 2–4 недели · клиент почувствовал эффект</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Как самочувствие? Чувствуете разницу? Если результат радует, мне будет очень приятно, если расскажете об этом тем, кто рядом. Ваша рекомендация для меня дороже любой рекламы.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Как результат? Если чувствуете разницу, мне будет очень приятно, если поделитесь с теми, кто рядом. Ваша рекомендация для меня - лучшая награда.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> личный опыт убеждает лучше любой рекламы. Самый сильный момент для рекомендации.</div>
+      </div>
+    </div>
+
+    <!-- МОМЕНТ 7 -->
+    <div class="moment">
+      <div class="moment-header">
+        <span class="moment-num">7</span>
+        <span class="moment-title">Повторная покупка · постоянный клиент</span>
+        <span class="moment-tag tag-loyal">Лояльный</span>
+      </div>
+      <div class="moment-body">
+        <div class="moment-context">Клиент покупает снова · значит доволен</div>
+        <div class="scripts-row">
+          <div class="script-box">
+            <div class="script-label">🎤 Голос</div>
+            <div class="script-text">Спасибо, что снова со мной - мне это очень приятно и важно. Есть среди коллег или друзей, кто мог бы получить такую же пользу? Одна рекомендация - и я позабочусь о них так же, как о Вас.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+          <div class="script-box2">
+            <div class="script-label2">💬 Переписка</div>
+            <div class="script-text2">Спасибо, что снова со мной - это очень приятно и важно для меня. Если есть знакомые, кому это нужно, одна рекомендация и я позабочусь о них так же, как о Вас.</div>
+            <button class="btn-copy" title="Копировать">📋</button>
+          </div>
+        </div>
+        <div class="why"><b>Почему работает:</b> постоянный клиент уже доверяет. Фраза "позабочусь так же" активирует желание помочь близким.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rules">
+    <div class="rules-title">3 принципа, которые делают просьбу сильной</div>
+    <div class="rule">
+      <span class="rule-num">1</span>
+      <div>
+        <div class="rule-main">Проси одно имя, а не весь список контактов</div>
+        <div class="rule-sub">Один конкретный человек - это легко. "Порекомендуйте всем" - это нагрузка. Конкретное всегда выполняется.</div>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-num">2</span>
+      <div>
+        <div class="rule-main">Сделай за клиента всё, кроме одного действия</div>
+        <div class="rule-sub">"Просто перешлите мой контакт - я сама всё объясню и позабочусь." Клиент делает одно движение - ты делаешь всё остальное.</div>
+      </div>
+    </div>
+    <div class="rule">
+      <span class="rule-num">3</span>
+      <div>
+        <div class="rule-main">Возвращайся с благодарностью</div>
+        <div class="rule-sub">"Ваш знакомый уже купил и очень доволен - спасибо, что доверились мне." Человек, который рекомендовал, чувствует гордость и рекомендует снова.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="bottom-text">Поддержка - это тоже терапия · Интегра</div>
+  </div>
+
+</div>
+
+<script>
+document.querySelectorAll('.moment-header').forEach(header => {
+  header.addEventListener('click', () => {
+    const parent = header.parentElement;
+    parent.classList.toggle('active');
+  });
+});
+
+// Умный скрипт копирования, определяющий правильный текст в зависимости от контейнера
+document.querySelectorAll('.btn-copy').forEach(button => {
+  button.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const container = button.parentElement;
+    
+    // Ищем текст либо внутри блока Голоса (.script-text), либо внутри Переписки (.script-text2)
+    const textField = container.querySelector('.script-text') || container.querySelector('.script-text2');
+    const textToCopy = textField.innerText;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+      button.innerText = '✓';
+      button.classList.add('copied');
+      setTimeout(() => {
+        button.innerText = '📋';
+        button.classList.remove('copied');
+      }, 1500);
+    });
+  });
+});
+</script>
+</body>
+</html>
