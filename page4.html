@@ -320,7 +320,7 @@ document.querySelectorAll('.section-header').forEach(header => {
 // Кнопка копирования фраз
 document.querySelectorAll('.btn-copy').forEach(button => {
   button.addEventListener('click', (e) => {
-    e.stopPropagation(); // Предотвращаем схлопывание списка при копировании внутри него
+    e.stopPropagation(); // 
     const textToCopy = button.parentElement.querySelector('.text-content').innerText;
     
     navigator.clipboard.writeText(textToCopy).then(() => {
