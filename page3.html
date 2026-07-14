@@ -12,24 +12,38 @@ body { background:#fdfaf4; font-family:'Montserrat',Arial,sans-serif; padding:40
 .container { max-width:900px; margin:0 auto; }
 
 /* БОКОВАЯ НАВИГАЦИЯ */
-.sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:#ffffff; box-shadow:2px 0 15px rgba(133,79,11,0.05); padding:24px 16px; z-index:1000; display:flex; flex-direction:column; gap:24px; }
-.sidebar-logo-block { display:flex; justify-content:center; align-items:center; padding-bottom:16px; border-bottom:1px solid #f9f1e6; }
+.sidebar { position:fixed; top:0; left:0; bottom:0; width:260px; background:#ffffff; box-shadow:2px 0 15px rgba(24,95,165,0.06); padding:24px 16px; z-index:1000; display:flex; flex-direction:column; gap:24px; }
+.sidebar-logo-block { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  padding-bottom: 16px; 
+  border-bottom: 1px solid #e2eaf2; 
+}
 .sidebar-logo-text { font-size:18px; font-weight:600; letter-spacing:2.5px; color:#185FA5; }
 
 .nav-links { display:flex; flex-direction:column; gap:8px; }
-.nav-btn { 
-  font-family: 'Montserrat', Arial, sans-serif; 
-  font-size: 13px; 
-  font-weight: 600; 
-  text-decoration: none; 
-  padding: 12px 14px; 
-  border-radius: 8px; 
-  display: flex; 
-  align-items: center; 
-  gap: 10px; 
-  transition: all 0.2s ease; 
-  border: 1px solid transparent; /* Контур скрыт по умолчанию */
-}
+.nav-btn { font-family:'Montserrat',Arial,sans-serif; font-size:13px; font-weight:600; text-decoration:none; padding:12px 14px; border-radius:8px; display:flex; align-items:center; gap:10px; transition:all 0.2s ease; border:1px solid transparent; }
+
+/* 1. Рекомендации (светло-голубой) */
+.btn-recommend { background:#f0f7ff; color:#185FA5; }
+.btn-recommend:hover, 
+.btn-recommend.active { background:#e1effe; border-color:#85b7eb; color:#114e8a; }
+
+/* 2. Отказ (светло-красный) */
+.btn-refusal { background:#fff5f5; color:#a32d2d; }
+.btn-refusal:hover, 
+.btn-refusal.active { background:#ffe3e3; border-color:#f09595; color:#822020; }
+
+/* 3. Оплата (светло-зеленый) */
+.btn-pay-page { background:#e8f8f0; color:#1e7e4c; }
+.btn-pay-page:hover, 
+.btn-pay-page.active { background:#d1f2e1; border-color:#2ecc71; color:#145d37; }
+
+/* 4. Доставка (светло-рыжий) */
+.btn-delivery { background:#fffaf0; color:#854f0b; }
+.btn-delivery:hover, 
+.btn-delivery.active { background:#fef3c7; border-color:#ef9f27; color:#6b3e05; }
 
 /* --- ОБЫЧНЫЕ КНОПКИ --- */
 .btn-recommend { background: #e6f1fb; color: #185FA5; }
